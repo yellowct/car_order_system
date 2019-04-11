@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	{include file="public/header"}
+
+	<title>预约记录</title>
+	<link rel="stylesheet" href="/hct/WeChat/CSS/yuyuejilu.css">
+
+</head>
+
+<body>
+	<div id="main">
+		<div v-for="item in message">
+		<div class="line">
+			<div class="lineTop">
+				<span class="time">{{ item.create_time }}</span>
+				<span class="statu" v-bind:class="{ing: item.isIng, cqdz: item.isCq, finish: item.isFinish }">{{ item.type }}</span>
+
+			</div>
+			<div class="lineCon">
+				<span class="lineCon-left">商品</span>
+				<span class="lineCon-right">{{ item.good_name }}</span>
+			</div>
+			<div class="lineCon">
+				<span class="lineCon-left">车牌号码</span>
+				<span class="lineCon-right">{{ item.car_num }}</span>
+			</div>
+			<div class="lineCon">
+				<span class="lineCon-left">公司名称</span>
+				<span class="lineCon-right">{{ item.company }}</span>
+			</div>
+			<div class="lineCon">
+				<span class="lineCon-left">真实姓名</span>
+				<span class="lineCon-right">{{ item.real_name }}</span>
+			</div>
+			<div class="lineCon">
+				<span class="lineCon-left">联系电话</span>
+				<span class="lineCon-right">{{ item.phone }}</span>
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+<script>
+	var vm = new Vue({
+
+		el: '#main',
+
+		data: {
+
+			message: [],
+
+			car_num: '',
+
+			good_name:'',
+
+			company: '',
+
+			real_name: '',
+
+			phone: '',
+
+			create_time: '',
+
+			type: '',
+
+			isIng: false,
+
+			isCq: false,
+
+			isFinish: false
+
+		},
+
+		created: function () {
+
+			var vthis = this;
+
+			$.ajax({
+
+				url: "get_records",
+
+				type: 'post',
+
+				dataType: 'json',
+
+				success: function (data, status) {
+
+					for (var i in data) {
+
+						if (data[i]["type"] == 3) {
+
+							data[i]["type"] = "已装";
+
+							vthis.isIng = false;
+
+							vthis.isCq = false;
+
+							vthis.isFinish = true;
+
+						} else if (data[i]["type"] == 2) {
+
+							data[i]["type"] = "装车中";
+
+							vthis.isIng = true;
+
+							vthis.isCq = false;
+
+							vthis.isFinish = false;
+
+						} else if (data[i]["type"] == 1) {
+
+							data[i]["type"] = "待装";
+
+							vthis.isIng = false;
+
+							vthis.isCq = true;
+
+							vthis.isFinish = false;
+
+						}
+
+
+
+						vthis.message.push({
+
+							good_name:data[i]['good_name'],
+
+							car_num: data[i]["car_num"],
+
+							type: data[i]["type"],
+
+							company: data[i]["company"],
+
+							real_name: data[i]["real_name"],
+
+							phone: data[i]["phone"],
+
+							create_time: data[i]["create_time"],
+
+							isIng: vthis.isIng,
+
+							isCq: vthis.isCq,
+
+							isFinish: vthis.isFinish
+
+						});
+
+					}
+
+					console.log(vthis.message);
+
+				},
+
+				fail: function (err, status) {
+
+					console.log(err)
+
+				}
+
+			});
+
+		},
+
+		methods: {
+
+			refresh: function () {
+
+				location.reload();
+
+			}
+
+		}
+
+	});
+</script>
+
+</html>

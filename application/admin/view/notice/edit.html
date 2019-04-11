@@ -1,0 +1,66 @@
+{include file="public/header"}
+
+
+<body>
+    <div class="x-body">
+        <form class="layui-form">
+            <input type="hidden" name="id"  value="{$notice.id}">
+            <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">
+                    <span class="x-red">*</span>内容
+                </label>
+                <div class="layui-input-inline">
+                    <textarea id="content" name="content" required="" lay-verify="required" autocomplete="off" class="layui-input" style="width: 300px;height: 60px;">{$notice.content}</textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="edit" lay-submit="" type="button">
+                    保存
+                </button>
+            </div>
+        </form>
+    </div>
+    <script>
+       
+
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form,
+                layer = layui.layer;
+
+            //自定义验证规则
+            form.verify({
+                content: function (value) {
+                    if (value.length == null) {
+                        return '内容不能为空';
+                    }
+                }
+            });
+
+            //监听提交
+            form.on('submit(edit)', function (res) {
+                $.post("{:url('notice/edit')}", res.field, function (data) {
+                    layer.alert(data.msg, {
+                        icon: 6
+                    }, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        //刷新父页面
+                        parent.location.reload();
+                    });
+                    return false;
+                })
+            });
+
+
+        });
+    </script>
+
+    
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+{include file="public/header"}
+
+<body class="layui-anim layui-anim-up">
+  <div class="x-nav">
+
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+      href="javascript:location.replace(location.href);" title="刷新">
+      <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+  </div>
+    <table class="layui-table">
+      <thead>
+        <tr>
+          <th>内容</th>
+          <th>修改时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      {volist name="notice" id="vo"}
+      <tbody>
+        <tr>
+          <td>{$vo.content}</td>
+          <td>{$vo.update_time}</td>
+         <td>
+            <a title="编辑" onclick="x_admin_show('编辑','edit.html?id=1',600,200)" href="javascript:;">
+              <i class="layui-icon">&#xe642;</i>
+            </a>
+          
+          </td>
+        </tr>
+        {/volist}
+      </tbody>
+    </table>
+    <div class="page">
+      {$page}
+    </div>
+  </div>
+   
+</body>
+
+</html>

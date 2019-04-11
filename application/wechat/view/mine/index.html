@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+{include file="public/header"}
+	<title>个人中心</title>
+	<link rel="stylesheet" href="/hct/WeChat/CSS/myCenter.css">
+	
+	
+</head>
+<body>
+	<div id="main">
+		<div class="top">
+			<div class="userInfo">
+				<img v-bind:src="headimgurl"/>
+				<span>{{nickname}}</span>
+			</div>
+			<a href="records.html" class="l weui-cell__bd">我的预约记录</a>
+		</div>
+
+		<else />
+		<div class="carInfo">
+			<span class="num" v-bind:class="{numIng: isIng, numCq: isCq , numStop: isStop}">{{ rank }}</span>
+				<span class="chepai">{{car_num}}</span>
+				<span class="statu" v-bind:class="{ing: isIng, cq: isCq }">{{ type }}</span>
+
+		</div>
+
+		<div class="myIfo">
+		<a href="info.html" class="l m weui-cell__bd">
+				<span>我的信息</span>
+				<span>去编辑</span>
+			</a>
+			<div class="line">
+				<div class="line-left">
+					<span>真实姓名</span>
+					<p>{{ real_name }}</p>
+				</div>
+				<div class="line-right">
+					<span>联系电话</span>
+					<p>{{ phone }}</p>
+				</div>
+			</div>
+			<div class="line">
+				<div class="line-left">
+					<span>车牌号</span>
+					<p>{{ num }}</p>
+				</div>
+				<div class="line-right">
+					<span>公司名称</span>
+					<p>{{ company }}</p>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="contact">
+
+			<a href="{:url('Mine/contact')}" class="weui-cell__bd">联系我们</a>
+			<a href="{:url('Mine/about')}" class="weui-cell__bd">关于我们</a>
+
+		</div>
+
+		<div id="footer">
+			<a href="{:url('index/index')}" >
+			<img src="/hct/WeChat/IMG/paiduichaxun.png" alt=""/>
+			<p>排队查询</p>
+			</a>
+			<a href="{:url('Order/index')}">
+				<img src="/hct/WeChat/IMG/yuyue.png" alt=""/>
+				<p>预约装车</p>
+			</a>
+				<a href="{:url('mine/index')}" class="on">
+					<img src="/hct/WeChat/IMG/gerenzhongxin2.png" alt=""/>
+					<p>个人中心</p>
+				</a>
+			</div>
+
+	</div>
+</body>
+<script>
+var vm = new Vue({
+
+el: '#main',
+
+data: {
+
+	car_num: '',
+
+	num: '',
+
+	type: '',
+
+	company: '',
+
+	real_name: '',
+
+	phone: '',
+
+	headimgurl: '',
+
+	nickname: '',
+
+	rank: '',
+
+	isIng: false,
+
+	isCq: false
+
+},
+
+created: function () {
+
+	var vthis = this;
+
+	$.ajax({
+
+		url: "get_info",
+
+		type: 'post',
+
+		dataType: 'json',
+
+		success: function (data, status) {
+
+			vthis.car_num = data[0]["car_num"];
+
+			vthis.num = data[0]["num"];
+
+			if(data[0]["type"] == 3) {
+
+				vthis.type = "已装";
+
+			} else if(data[0]["type"] == 2) {
+
+				vthis.type = "装车中";
+
+				vthis.isIng = true;
+
+				vthis.isCq = false;
+
+			} else if(data[0]["type"] == 1) {
+
+				vthis.type = "待装";
+
+				vthis.isIng = false;
+
+				vthis.isCq = true;
+
+			} 
+
+			vthis.company = data[0]["company"];
+
+			vthis.real_name = data[0]["real_name"];
+
+			vthis.phone = data[0]["phone"];
+
+			vthis.headimgurl = data[0]["headimgurl"];
+
+			vthis.nickname = data[0]["nickname"];
+
+			vthis.rank = data[0]["rank"];
+
+		},
+
+		fail: function (err, status) {
+
+			console.log(err)
+
+		}
+
+	});
+
+
+
+},
+
+methods: {
+
+	refresh: function () {
+
+		location.reload();
+
+	}
+
+}
+
+});</script>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+{include file="public/header"}
+	<title>关于我们</title>
+	
+	<link rel="stylesheet" href="/hct/WeChat/CSS/about.css">
+
+</head>
+<body>
+    <img src="/hct/WeChat/IMG/ab.jpg" class="ab">
+	<div class="topTxt">
+		<p>关于我们</p>
+		<p class="today">今天是<span class="time"></span></p>
+	</div>
+	<div class="Con">
+		<p>车辆预约系统,是针对批发市场装车管理,以及装车状态管理,研发的新一代管理系统。</p>
+		<p>本系统通过信息化手段，将商品装车的状态和车辆排队管理有机的结合起来，并通过综合信息发布平台和自动呼叫系统引导车辆到指定位置进行装车。</p>
+		<p>以此杜绝车辆在市场内乱停乱放，规范市场秩序，减少安全隐患，提高商品装车管理效率。</p>
+	</div>
+
+</body>
+<script type="text/javascript">
+		$(function(){
+			var myDate = new Date();//获取系统当前时间
+			var str = myDate.getFullYear()+"年"+(myDate.getMonth()+1)+"月"+myDate.getDate()+"日";
+			$('.time').html(str)
+		})
+
+</script>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	{include file="public/header"}
+	<title>预约装车</title>
+	<link rel="stylesheet" href="/hct/WeChat/CSS/yuyuezhuangche.css">
+</head>
+<style>
+	.weui-mask.weui-mask--visible {
+		opacity: 0.2;
+	}
+</style>
+
+<body>
+	<div id="main">
+		<div class="con">
+			<div class="line">
+				<div class="null">
+					<span class="yuan"></span>
+				</div>
+				<span class="Txt">真实姓名</span>
+				<input type="text" class="weui-input" placeholder="请输入真实姓名" v-model="name">
+			</div>
+			<div class="line">
+				<div class="null">
+				</div>
+				<span class="Txt">联系电话</span>
+				<input type="tel" class="weui-input" placeholder="请输入联系电话" v-model="phone"  maxlength="11">
+			</div>
+
+		</div>
+		<div class="con">
+			<div class="line ">
+				<div class="null">
+					<span class="yuan"></span>
+				</div>
+				<span class="Txt">商品类型</span>
+				<div class="selLine weui-cell__bd">
+					<select class="weui-select " @change="type">
+							<option selected value="" disabled="disabled" class="pz">类型</option>
+						{foreach $type as $vo}		
+						<option value="{$vo.id}">{$vo.name}</option>
+						{/foreach}
+					</select>
+				</div>
+				<div class="selLine weui-cell__bd">
+					<select class="weui-select weui-cell__bd" @change="good">
+						<!-- <option disabled="disabled">请选择类型</option> -->
+						<option selected value="" disabled="disabled" class="pz">名称</option>
+						<option v-for="item in goodName">{{ item }}</option>
+					</select>
+				</div>
+			</div>
+
+
+
+			<div class="line">
+				<div class="null">
+				</div>
+				<span class="Txt">车牌号</span>
+				<div class="lineC-left">
+					<select class="weui-select weui-cell__bd citys pz" style="width: 20px" v-model="nowCity">
+						<option v-for="item in citys" v-bind:value="item">{{ item }}</option>
+					</select>
+					<select class="weui-select weui-cell__bd cityWords pz" style="width: 20px" v-model="nowCityWords">
+						<option v-for="item in cityWords" v-bind:value="item">{{ item }}</option>
+					</select>
+					<input type="text" class="weui-input" placeholder="请输入车牌号" v-model="number" maxlength="5" required>
+				</div>
+			</div>
+
+			<div class="line">
+				<div class="null">
+				</div>
+				<span class="Txt">公司名称</span>
+				<input type="text" class="weui-input" placeholder="请输入公司名称" v-model="company">
+			</div>
+		</div>
+		<div class="subBtn" v-on:click="submit" v-if="isStop">提交预约</div>
+
+
+		<div id="footer">
+			<a href="{:url('index/index')}">
+				<img src="/hct/WeChat/IMG/paiduichaxun.png" alt="" />
+				<p>排队查询</p>
+			</a>
+			<a href="{:url('order/index')}" class="on">
+				<img src="/hct/WeChat/IMG/yuyue2.png" alt="" />
+				<p>预约装车</p>
+			</a>
+			<a href="{:url('mine/index')}">
+				<img src="/hct/WeChat/IMG/gerenzhongxin.png" alt="" />
+				<p>个人中心</p>
+			</a>
+		</div>
+
+
+	</div>
+</body>
+<script>
+	var vm = new Vue({
+		el: '#main',
+		data: {
+			selected: '1',
+			goodNameData: '',
+			goodName: [],
+			number: '',
+			company: '',
+			isStop: true,
+			phone: '',
+			name: '',
+			citys: ['京', '津', '冀', '晋', '蒙', '辽', '吉', '黑', '沪', '苏', '浙', '皖', '闽', '赣', '鲁', '豫', '鄂', '湘', '粤', '桂', '琼', '渝', '川', '黔', '滇', '藏', '陕', '甘', '青', '宁', '新', '台', '港', '澳'],
+			cityWords: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'X', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+			nowCity: '粤',
+			nowCityWords: 'A'
+		},
+		created: function () {
+			var vthis = this;
+			$.ajax({
+				url: "get_good",
+				type: 'post',
+				dataType: 'json',
+				data: { "type": this.selected },
+				success: function (data, status) {
+					
+					vthis.goodName = data;
+					vthis.goodNameData = data[0]['name'];
+					console.log(vthis.goodNameData);
+				},
+				fail: function (err, status) {
+					console.log(err)
+				}
+			});
+
+			$.ajax({
+				url: "defult_input",
+				type: 'post',
+				dataType: 'json',
+				success: function (data, status) {
+					vthis.number = data[0]["car_num"].substring(2, data[0]["car_num"].length);
+					vthis.nowCity = data[0]["car_num"].substring(0, 1);
+					vthis.nowCityWords = data[0]["car_num"].substring(1, 2);
+					console.log("nowCity:" + vthis.nowCity + "nowCityWords:" + vthis.nowCityWords);
+					vthis.company = data[0]["company"];
+					vthis.name = data[0]["real_name"];
+					vthis.phone = data[0]["phone"];
+					if (data[0]["status"] == 0) {
+						vthis.isStop = false;
+						alert("目前暂停中");
+					} else if (data[0]["type"] == 1 || data[0]["type"] == 2) {
+						vthis.isStop = false;
+						alert("预约进行中");
+					} else {
+						vthis.isStop = true;
+					}
+					console.log(vthis.number);
+				},
+				fail: function (err, status) {
+					console.log(err)
+				}
+			});
+
+		},
+		computed: {
+			now: function () {
+
+			}
+		},
+		methods: {
+			type: function (ele) {
+				this.selected = ele.target.value;
+				var vthis = this;
+				$.ajax({
+					url: "get_good",
+					type: 'post',
+					dataType: 'json',
+					data: { "type": this.selected },
+					success: function (data, status) {
+						
+						vthis.goodName = data;
+						vthis.goodNameData = data[0]['name'];
+						console.log(vthis.goodName);
+					},
+					fail: function (err, status) {
+						console.log(err)
+					}
+				});
+			},
+			good: function (ele) {
+				this.goodNameData = ele.target.value;
+				console.log(this.goodNameData);
+			},
+			submit: function () {
+				var vthis = this;
+				if (this.phone == "" || this.name == "" || this.number == "" || this.company == "") {
+					alert("输入不能为空");
+				} else if (this.number.length != 5) {
+					alert("车牌号必须要五位");
+				} else {
+					var that = this;
+					$.ajax({
+						url: "submit_order",
+						type: 'post',
+						dataType: 'json',
+						data: {
+							"real_name":this.name,
+							"phone": this.phone,
+							"good_name": this.goodNameData,
+							"car_num": this.nowCity + this.nowCityWords + this.number,
+							"company": this.company
+						},
+						success: function (data, status) {
+								alert(data);
+								$.ajax({
+									url: "/hct/wechat/mine/edit_user",
+									type: 'post',
+									dataType: 'json',
+									data: {
+										"real_name": that.name,
+										"phone": that.phone,
+										"num": that.nowCity + that.nowCityWords + that.number,
+										"company": that.company
+									},
+									success: function (data, status) {
+										console.log(data);
+										location.reload();	
+									},
+									fail: function (err, status) {
+										console.log(err)
+									}
+								})
+						},
+						fail: function (err, status) {
+							console.log(err)
+						}
+					});
+					
+				}
+			}
+		}
+	});
+</script>
+
+</html>

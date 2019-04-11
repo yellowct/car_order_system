@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	{include file="public/header"}
+	<title>我的信息</title>
+	<link rel="stylesheet" href="/hct/WeChat/CSS/myInfo.css">
+
+</head>
+
+<body>
+	<div id="main">
+		<div class="con">
+			<div class="line">
+				<span>真实姓名</span>
+				<input type="text" class="weui-input" v-bind:value="real_name" v-model="real_name">
+			</div>
+			<div class="line">
+				<span>联系电话</span>
+				<input type="tel" class="weui-input" v-bind:value="phone" v-model="phone">
+			</div>
+			<div class="line">
+				<span>车牌号</span>
+				<input type="text" class="weui-input" v-bind:value="num" v-model="num">
+			</div>
+			<div class="line">
+				<span>公司名称</span>
+				<input type="text" class="weui-input" v-bind:value="company" v-model="company">
+			</div>
+		</div>
+		<div class="subBtn" v-on:click="submit">确定修改</div>
+	</div>
+</body>
+<script>
+	var vm = new Vue({
+
+		el: '#main',
+
+		data: {
+
+			real_name: '',
+
+			phone: '',
+
+			num: '',
+
+			company: ''
+
+		},
+
+		created: function () {
+
+			var vthis = this;
+
+			$.ajax({
+
+				url: "get_info",
+
+				type: 'post',
+
+				dataType: 'json',
+
+				success: function (data, status) {
+
+							vthis.real_name = data[0]["real_name"];
+
+							vthis.phone = data[0]["phone"];
+
+							vthis.num = data[0]["num"];
+
+							vthis.company = data[0]["company"];
+
+					console.log(data);
+
+				},
+
+				fail: function (err, status) {
+
+					console.log(err)
+
+				}
+
+			});
+
+
+
+		},
+
+		computed: {
+
+			now: function () {
+
+
+
+			}
+
+		},
+
+		methods: {
+
+			submit: function () {
+
+				var vthis = this;
+
+				if (this.real_name == "" || this.phone == "" || this.num == "" || this.company == "") {
+
+					alert("输入不能为空");
+
+				} else {
+
+					$.ajax({
+
+						url: "edit_user",
+
+						type: 'post',
+
+						dataType: 'json',
+
+						data: {
+
+							"real_name": this.real_name,
+
+							"phone": this.phone,
+
+							"num": this.num,
+
+							"company": this.company,
+
+						},
+
+						success: function (data, status) {
+
+							alert("修改成功");
+
+							location.href = "index";
+
+						},
+
+						fail: function (err, status) {
+
+							console.log(err)
+
+						}
+
+					});
+
+				}
+
+			},
+
+			refresh: function () {
+
+				location.reload();
+
+			}
+
+		}
+
+	});
+</script>
+
+</html>

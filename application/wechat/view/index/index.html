@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    {include file="public/header"}
+    <meta http-equiv="refresh" content="300">
+    <meta http-equiv="refresh" content="60">
+    <title>车辆运货预约</title>
+    <link rel="stylesheet" href="/hct/WeChat/CSS/index.css">
+
+</head>
+
+<body>
+    <div id="main">
+        <div id="box" class="box">
+            <div id="wrap" class="wrap">
+                <div id="start" class="start">
+                    <span>公告：</span>{$notice}
+                </div>
+            </div>
+        </div>
+        <div id="top">
+            <img src="/hct/WeChat/IMG/home.png" class="topImg">
+            <p
+                style="text-align: center;color: #333;height: 0.7rem;line-height: 0.7rem;font-size: .4rem; background-color: #fff;width: 90%;margin: 0 auto;padding: .1rem .2rem;">
+                装车排队情况</p>
+            <div class="search">
+                <div class="searchCon">
+                    <!-- <span class="sx" @click="sxBtn">筛选</span> -->
+                    <input type="text" placeholder="请输入你想搜索的内容" class="weui-input" v-model="searchData">
+                    <span class="icon-search" v-on:click="submit"></span>
+                    <div class="refresh">
+                        <span class="icon-refresh" v-on:click="refresh"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="search">
+                <div class="searchCon-right">
+                    <select id="sel" @change="type">
+                        <option disabled="disabled" selected="selected">请选择类型</option>
+                        {foreach $type as $vo}
+                        <option value="{$vo.id}">{$vo.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="searchCon-right">
+                    <select id="sel" @change="selectGoodName" v-model="goodNameData">
+                        <option disabled="disabled" selected="selected">请选择名称</option>
+                        <option v-for="item in goodName" class="oilName">{{ item }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="list" style="height:6.5rem">
+            <div v-for="item in order">
+                <div class="line">
+                    <span class="num"
+                        v-bind:class="{numIng: item.isIng, numCq: item.isCq }">{{ item.rank }}</span>
+                    <span class="chepai">{{ item.car_num }}</span>
+                    <span class="statu"
+                        v-bind:class="{ing: item.isIng, cq: item.isCq }">{{ item.type }}</span>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div id="footer">
+            <a href="{:url('index/index')}" class="on">
+                <img src="/hct/WeChat/IMG/paiduichaxun2.png" alt="">
+                <p>排队查询</p>
+            </a>
+            <a href="{:url('Order/index')}">
+                <img src="/hct/WeChat/IMG/yuyue.png" alt="">
+                <p>预约装车</p>
+            </a>
+            <a href="{:url('Mine/index')}">
+                <img src="/hct/WeChat/IMG/gerenzhongxin.png" alt="" />
+                <p>个人中心</p>
+            </a>
+        </div>
+    </div>
+    </div>
+</body>
+<script>
+    var vm = new Vue({
+
+        el: '#main',
+
+        data: {
+
+            selected: '',
+
+            goodNameData: '',
+
+            goodName: [],
+
+            isIng: false,
+
+            isCq: false,
+
+            // isStop: false,
+
+            searchData: '',
+
+            good: '',
+
+            order: []
+
+        },
+
+        created: function () {
+
+            var vthis = this;
+
+            $.ajax({
+
+                url: "/hct/wechat/order/get_good",
+
+                type: 'post',
+
+                dataType: 'json',
+
+                data: { "type": this.selected },
+
+                success: function (data, status) {
+
+                    vthis.goodName = data;
+
+                    vthis.goodNameData = '请选择名称';
+
+                    console.log(vthis.goodNameData);
+                },
+
+                fail: function (err, status) {
+
+                    console.log(err)
+
+                }
+
+            });
+
+
+            $.ajax({
+
+                url: "get_order",
+
+                type: 'post',
+
+                dataType: 'json',
+
+                data: { "good_name": '' },
+
+                success: function (data, status) {
+
+                    for (var i in data) {
+
+                        if (data[i]["type"] == 2) {
+
+                            data[i]["type"] = "装车中";
+
+                            vthis.isIng = true;
+
+                            vthis.isCq = false;
+
+
+
+                        } else if (data[i]["type"] == 1) {
+
+                            data[i]["type"] = "待装";
+
+                            vthis.isIng = false;
+
+                            vthis.isCq = true;
+
+
+
+                        }
+
+
+
+                        vthis.order.push({
+
+                            rank: data[i]['rank'],
+
+                            car_num: data[i]["car_num"],
+
+                            type: data[i]["type"],
+
+                            isIng: vthis.isIng,
+
+                            isCq: vthis.isCq,
+
+                        });
+
+                    }
+
+                    console.log(vthis.order);
+
+                },
+
+                fail: function (err, status) {
+
+                    console.log(err)
+
+                }
+
+            });
+
+
+
+        },
+
+        computed: {
+
+            now: function () {
+
+
+
+            }
+
+        },
+
+        methods: {
+
+            type: function (ele) {
+
+                this.selected = ele.target.value;
+
+                var vthis = this;
+
+                $.ajax({
+
+                    url: "/hct/wechat/order/get_good",
+
+                    type: 'post',
+
+                    dataType: 'json',
+
+                    data: { "type": this.selected },
+
+                    success: function (data, status) {
+
+                        vthis.goodName = data;
+
+                        vthis.goodNameData = data[0];
+
+                        var ele = { target: { value: vthis.goodNameData } };
+
+                        vthis.selectGoodName(ele);
+
+                        console.log(vthis.goodNameData);
+
+                    },
+
+                    fail: function (err, status) {
+
+                        console.log(err)
+
+                    }
+
+                });
+
+            },
+
+            selectGoodName: function (ele) {
+
+                this.goodNameData = ele.target.value;
+
+                var vthis = this;
+
+
+                $.ajax({
+
+                    url: "get_order",
+
+                    type: 'post',
+
+                    dataType: 'json',
+
+                    data: { "good_name": this.goodNameData },
+
+                    success: function (data, status) {
+                        
+                        vthis.order=[];
+
+                        for (var i in data) {
+
+                            if (data[i]["type"] == 2) {
+
+                                data[i]["type"] = "装车中";
+
+                                vthis.isIng = true;
+
+                                vthis.isCq = false;
+
+
+
+                            } else if (data[i]["type"] == 1) {
+
+                                data[i]["type"] = "待装";
+
+                                vthis.isIng = false;
+
+                                vthis.isCq = true;
+
+
+
+                            }
+
+
+
+                            vthis.order.push({
+
+                                rank: data[i]['rank'],
+
+                                car_num: data[i]["car_num"],
+
+                                type: data[i]["type"],
+
+                                isIng: vthis.isIng,
+
+                                isCq: vthis.isCq,
+
+                            });
+
+                        }
+
+                        console.log(vthis.order);
+
+                    },
+
+                    fail: function (err, status) {
+
+                        console.log(err)
+
+                    }
+
+                });
+
+
+            },
+
+            submit: function () {
+
+                var vthis = this;
+
+                if (this.searchData == "") {
+
+                    alert("输入不能为空");
+
+                } else {
+
+                    $.ajax({
+
+                        url: "get_order",
+
+                        type: 'post',
+
+                        dataType: 'json',
+
+                        data: {
+
+                            "search_data": this.searchData
+
+                        },
+
+                        success: function (data, status) {
+
+                            vthis.order=[];
+
+                            for (var i in data) {
+
+                                if (data[i]["type"] == 2) {
+
+                                    data[i]["type"] = "装车中";
+
+                                    vthis.isIng = true;
+
+                                    vthis.isCq = false;
+
+
+
+                                } else if (data[i]["type"] == 1) {
+
+                                    data[i]["type"] = "待装";
+
+                                    vthis.isIng = false;
+
+                                    vthis.isCq = true;
+
+
+
+                                }
+
+
+
+                                vthis.order.push({
+
+                                    rank: data[i]['rank'],
+
+                                    car_num: data[i]["car_num"],
+
+                                    type: data[i]["type"],
+
+                                    isIng: vthis.isIng,
+
+                                    isCq: vthis.isCq,
+
+                                });
+
+                            }
+
+                            console.log(vthis.order);
+
+                        },
+
+                        fail: function (err, status) {
+
+                            console.log(err)
+
+                        }
+
+                    });
+
+                }
+
+            },
+
+            refresh: function () {
+
+                location.reload();
+
+            }
+
+        }
+
+    });
+</script>
+
+</html>

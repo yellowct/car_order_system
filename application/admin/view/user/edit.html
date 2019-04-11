@@ -1,0 +1,145 @@
+{include file="public/header"}
+
+
+<body>
+    <div class="x-body">
+        <form class="layui-form">
+            <input type="hidden" name="id"  value="{$user.id}">
+            <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">
+                    <span class="x-red">*</span>用户名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="nickname" name="nickname" value="{$user.nickname}" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">
+                    <span class="x-red">*</span>头像
+                </label>
+                <button type="button" class="layui-btn" id="photo">
+                    上传图片
+                </button>
+                <input type="hidden" name="headimgurl" id="img" value="{$user.headimgurl}">
+                <img id="img_data" style="width:50px;height:50px;border-radius:50px" width="200px" src="{$user.headimgurl}" />
+            </div>
+            <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">
+                    <span class="x-red">*</span>真实姓名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="real_name" name="real_name" value="{$user.real_name}" required="" lay-verify=""
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">
+                    <span class="x-red">*</span>手机号码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="phone" name="phone" value="{$user.phone}" required="" lay-verify=""
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">
+                    <span class="x-red">*</span>所属单位
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="company" name="company" value="{$user.company}" required="" lay-verify=""
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="edit" lay-submit="" type="button">
+                    保存
+                </button>
+            </div>
+        </form>
+    </div>
+    <script>
+          //上传图片
+          layui.use('upload', function () {
+            var upload = layui.upload;
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#photo',
+                url: '{:url("user/upload")}',
+                done: function (res) {
+                    $('#img').val(res.data);
+                    $('#img_data').attr('src', res.data);
+                    layer.msg(res.msg, {
+                        icon: 6,
+                        time: 1000,
+                        shade: 0.1
+                    }, function (index) {
+                        layer.close(index);
+
+                    });
+                },
+                error: function () {}
+            });
+        });
+
+
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form,
+                layer = layui.layer;
+
+            //自定义验证规则
+            form.verify({
+                nickname: function (value) {
+                    if (value.length == null) {
+                        return '昵称不能为空';
+                    }
+                }
+            });
+
+            //监听提交
+            form.on('submit(edit)', function (res) {
+                // $.ajax({
+                //     type:"post",
+                //     url:"{:url('user/edit')}",
+                //     data:res.field,
+                //     // dataType:FormData,
+                //     success:function(data){
+                //         layer.alert(data.msg, {
+                //         icon: 6
+                //     }, function () {
+                //         // 获得frame索引
+                //         var index = parent.layer.getFrameIndex(window.name);
+                //         //关闭当前frame
+                //         parent.layer.close(index);
+                //         //刷新父页面
+                //         parent.location.reload();
+                //     });
+                //     return false;
+                //     }                      
+                // })
+                $.post("{:url('user/edit')}", res.field, function (data) {
+                    layer.alert(data.msg, {
+                        icon: 6
+                    }, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        //刷新父页面
+                        parent.location.reload();
+                    });
+                    return false;
+                })
+            });
+
+
+        });
+    </script>
+
+    
+</body>
+
+</html>

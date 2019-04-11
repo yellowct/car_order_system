@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+{include file="public/header"}
+	<title>联系我们</title>
+	<link rel="stylesheet" href="/hct/WeChat/CSS/about.css">
+
+</head>
+<body>
+    <img src="/hct/WeChat/IMG/ab.jpg" class="ab">
+	<div class="topTxt">
+		<p>联系我们</p>
+		<p class="today">今天是<span class="time"></span></p>
+	</div>
+	<div class="Con">
+		<p class="title">现代化智能化信息化的新型批发市场</p>
+		<p>地址：惠州市惠州学院</p>
+		<p>电话：13666666666</p>
+		<p>传真：1210321-1013</p>
+		<p>邮箱：123456789@qq.com</p>
+	</div>
+
+</body>
+<script type="text/javascript">
+		$(function(){
+			var myDate = new Date();//获取系统当前时间
+			var str = myDate.getFullYear()+"年"+(myDate.getMonth()+1)+"月"+myDate.getDate()+"日";
+			$('.time').html(str)
+		})
+
+</script>
+</html>

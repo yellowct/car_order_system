@@ -1,0 +1,77 @@
+{include file="public/header"}
+
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">
+                    <span class="x-red">*</span>车牌号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="num" name="num" required="" lay-verify="required" autocomplete="off"
+                        class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">
+                    <span class="x-red">*</span>司机
+                </label>
+                <div class="layui-input-inline">
+                    <select  name="user_id">
+                        {foreach $user as $vo}
+                        <option value="{$vo.id}">{$vo.nickname}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="" type="button">
+                    增加
+                </button>
+            </div>
+        </form>
+    </div>
+    <script>
+       
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form,
+                layer = layui.layer;
+
+            //自定义验证规则
+            form.verify({
+                num: function (value) {
+                    if (value.length == null) {
+                        return '车牌号不能为空';
+                    }
+                }
+            });
+
+
+            //监听提交
+            form.on('submit(add)', function (res) {
+
+                $.post("{:url('car/add')}", res.field, function (data) {
+                    layer.alert(data.msg, {
+                        icon: 6
+                    }, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        //刷新父页面
+                        parent.location.reload();
+                    });
+                    return false;
+                })
+            });
+
+
+        });
+    </script>
+    
+</body>
+
+</html>

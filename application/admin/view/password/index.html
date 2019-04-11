@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改密码</title>
+
+</head>
+<body>
+{include file="home/header" /}
+    <table align="center">
+        <tr>
+            <td>旧密码:</td>
+            <td><input type="password" id="old" maxlength="20"></td>
+            <td><img id="img" src="/public/static/images/visible.png" width="20" onclick="ShowPwd()"/></td>
+        </tr>
+        <tr>
+            <td>新密码:</td>
+            <td><input type="password" id="new" maxlength="20"></td>
+            <td><img id="img1" src="/public/static/images/visible.png" width="20" onclick="ShowPwd1()"/></td>
+        </tr>
+        <tr>
+            <td>确认密码:</td>
+            <td><input type="password" id="check" maxlength="20"></td>
+            <td><img id="img2" src="/public/static/images/visible.png" width="20" onclick="ShowPwd2()"/></td>
+        </tr>
+        <tr align="center">
+            <td colspan="2"><input id="update" type="submit" value="修改"></td>
+        </tr>
+    </table>
+<script src="/hct/public/static/js/jquery.js"></script>
+<script src="/hct/public/static/js/admin/password.js"></script>
+</body>
+</html>
