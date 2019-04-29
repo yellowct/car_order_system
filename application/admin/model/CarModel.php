@@ -13,7 +13,7 @@ class CarModel extends Model
         $car = $this->where($map)->order('id desc')->paginate(6);
         $list = $car->items();    
         foreach ($list as $key => $value) {
-            $list[$key]['user'] = db('user')->where('id',$value['user_id'])->value('nickname');
+            $list[$key]['user'] = db('user')->where('id',$value['user_id'])->value('real_name');
         }
         //   查询总条数
         $count = $this->where($map)->count();

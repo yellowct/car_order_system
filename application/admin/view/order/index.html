@@ -15,24 +15,22 @@
             <div class="layui-inline">
             <select  name="type" >
               <option value="" selected>类型</option>
-              <option value="1">待装</option>
-              <option value="2">装车中</option>
-              <option value="3">已装</option>
+              <option value="2">进行中</option>
+              <option value="3">已完成</option>
             </select>
             </div>
             <div class="layui-inline">
           <input class="layui-input" placeholder="开始日" name="start" id="start">
           <input class="layui-input" placeholder="截止日" name="end" id="end">
-          <input type="text" name="num" id="num" placeholder="请输入订单编号" autocomplete="off" class="layui-input">
+          <input type="text" name="num" id="num" placeholder="请输入司机/车牌号/电话号码/商品名称/单位" autocomplete="off" class="layui-input" style="width: 300px;">
           <button class="layui-btn" type="submit" name="submit"><i class="layui-icon">&#xe615;</i></button>
           </div>
         </div>
       </form>
     </div>
     <xblock>
-      <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-      <!-- <button class="layui-btn" onclick="x_admin_show('添加订单','./add.html',600,300)"><i
-          class="layui-icon"></i>添加</button> -->
+      <!-- <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button> -->
+      <button class="layui-btn" onclick="excel()">生成Excel</button>
       <span class="x-right" style="line-height:40px">共有数据：{$count} 条</span>
     </xblock>
     <table class="layui-table">
@@ -50,7 +48,6 @@
           <th>单位</th>
           <th>加入时间</th>
           <th>类型</th>
-          <th>状态</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -78,17 +75,9 @@
             <span class="layui-btn layui-btn-normal layui-btn-fluid">已装</span>
             {/if}
           <td class="td-status">
-            {if $vo.status == 1}
-            <span class="layui-btn layui-btn-normal layui-btn-mini">正常</span>
-          <td class="td-manage">
-            <a onclick="order_stop(this,'{$vo.id}')" href="javascript:;" title="暂停">
+            {if $vo.type == 2}
+            <a title="完成" onclick="finish('{$vo.id}')" href="javascript:;">
               <i class="layui-icon">&#xe601;</i>
-            </a>
-            {else /}
-            <span class="layui-btn layui-btn-normal layui-btn-mini layui-btn-disabled">暂停</span></td>
-          <td class="td-manage">
-            <a onclick="order_stop(this,'{$vo.id}')" href="javascript:;" title="恢复">
-              <i class="layui-icon">&#xe62f;</i>
             </a>
             {/if}
             <a title="删除" onclick="order_del('{$vo.id}')" href="javascript:;">
@@ -114,58 +103,36 @@
       //执行一个laydate实例
       laydate.render({
         elem: '#start', //指定元素
-        type: 'datetime'
+        type: 'date'
 
       });
 
       //执行一个laydate实例
       laydate.render({
         elem: '#end', //指定元素
-        type: 'datetime'
+        type: 'date'
       });
     });
 
 
-    /*用户-暂停*/
-    function order_stop(obj, id) {
-
-      if ($(obj).attr('title') == '暂停') {
-        layer.confirm('确认要暂停吗？', function (index) {
-          $.post("{:url('order/end')}", {
-            id: id
-          }, function (data) {
-            //发异步把用户状态进行更改
-            $(obj).attr('title', '恢复')
-            $(obj).find('i').html('&#xe62f;');
-
-            $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('暂停');
-            layer.msg('已暂停!', {
-              icon: 5,
-              time: 1000
-            });
-          })
+    function finish(id) {
+      layer.confirm('确认要完成吗？', function (index) {
+        //发异步删除数据
+        $.post("{:url('order/finish')}", {
+          id: id
+        }, function (data) {
+          //发异步把用户状态进行更改
+          layer.msg('已装完！', {
+            icon: 6,
+            time: 1000,
+            end: function () {
+              window.location.href = "{:url('order/index')}";
+            }
+          });
 
         })
-      } else {
-        layer.confirm('确认要恢复吗？', function (index) {
-          $.post("{:url('order/start')}", {
-            id: id
-          }, function (data) {
-            //发异步把用户状态进行更改
-            $(obj).attr('title', '暂停')
-            $(obj).find('i').html('&#xe601;');
 
-            $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('正常');
-            layer.msg('已恢复!', {
-              icon: 6,
-              time: 1000
-            });
-          })
-
-        })
-      }
-
-
+      });
     }
 
     /*用户-删除*/
@@ -189,7 +156,24 @@
       });
     }
 
+    function excel(data){
+      var start="{$excel.start}";
+      var end="{$excel.end}";
+      var status="{$excel.status}";
+      window.location.href="{:url('order/excel_out')}"+"?"+"start="+start+"&end="+end+"&status="+status;
+      // $.post("{:url('order/excel_out')}", {
+      //     start: start,end:end,status:status
+      //   }
+      //   // , function (data) {
+      //   //   //发异步把用户状态进行更改
+      //   //   layer.msg('导出成功！', {
+      //   //     icon: 1,
+      //   //     time: 1000,
+      //   //   });
 
+      //   // }
+      //   )
+    }
 
     function delAll(argument) {
 

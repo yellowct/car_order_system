@@ -5,7 +5,7 @@
     <div class="x-body">
         <form class="layui-form">
             <input type="hidden" name="id"  value="{$user.id}">
-            <div class="layui-form-item">
+            <!-- <div class="layui-form-item">
                 <label for="L_email" class="layui-form-label">
                     <span class="x-red">*</span>用户名
                 </label>
@@ -13,8 +13,8 @@
                     <input type="text" id="nickname" name="nickname" value="{$user.nickname}" required="" lay-verify="required"
                         autocomplete="off" class="layui-input">
                 </div>
-            </div>
-            <div class="layui-form-item">
+            </div> -->
+            <!-- <div class="layui-form-item">
                 <label for="L_username" class="layui-form-label">
                     <span class="x-red">*</span>头像
                 </label>
@@ -23,7 +23,7 @@
                 </button>
                 <input type="hidden" name="headimgurl" id="img" value="{$user.headimgurl}">
                 <img id="img_data" style="width:50px;height:50px;border-radius:50px" width="200px" src="{$user.headimgurl}" />
-            </div>
+            </div> -->
             <div class="layui-form-item">
                 <label for="L_username" class="layui-form-label">
                     <span class="x-red">*</span>真实姓名
@@ -92,7 +92,7 @@
 
             //自定义验证规则
             form.verify({
-                nickname: function (value) {
+                real_name: function (value) {
                     if (value.length == null) {
                         return '昵称不能为空';
                     }

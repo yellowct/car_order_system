@@ -11,11 +11,11 @@ class Car extends Controller
     public function index()
     {
         $map = [];
-        $num = input('post.num');
+        $select_data = input('post.num');
         $start = input('post.start');
         $end = input('post.end');
-        if ($num && $num !== "") {
-            $map['num'] = ['like', "%" . $num . "%"];
+        if ($select_data && $select_data !== "") {
+            $map['num'] = ['like', "%" . $select_data . "%"];
         }
         if ($start && $start !== "") {
             $map['create_time'] = ['egt', strtotime($start)];

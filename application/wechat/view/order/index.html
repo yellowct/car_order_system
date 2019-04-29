@@ -148,10 +148,16 @@
 					if (data[0]["status"] == 0) {
 						vthis.isStop = false;
 						alert("目前暂停中");
-					} else if (data[0]["type"] == 1 || data[0]["type"] == 2) {
+					} 
+					else if (data[0]["type"] == 1 ) {
 						vthis.isStop = false;
 						alert("预约进行中");
-					} else {
+					} 
+					else if ( data[0]["type"] == 2) {
+						vthis.isStop = false;
+						alert("预约进行中");
+					} 
+					else {
 						vthis.isStop = true;
 					}
 					console.log(vthis.number);
@@ -191,6 +197,7 @@
 				this.goodNameData = ele.target.value;
 				console.log(this.goodNameData);
 			},
+			// 提交预约
 			submit: function () {
 				var vthis = this;
 				if (this.phone == "" || this.name == "" || this.number == "" || this.company == "") {

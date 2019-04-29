@@ -20,6 +20,8 @@ class Order extends Controller
         $this->assign(['user' => $user, 'type' => $type]);
         return $this->fetch('index');
     }
+
+    // 获取商品名称
     public function get_good()
     {
         $type_id = input('post.type');
@@ -28,13 +30,17 @@ class Order extends Controller
             ->where('b.id', $type_id)->column('a.name');
         return $good;
     }
+
+    // 默认信息
     public function defult_input()
     {
         $info = Db::name('user')->alias('a')
             ->join('order b', 'b.real_name=a.real_name')
-            ->field('b.*')->where('a.openid', session('openid'))->select();
+            ->order('b.id desc')
+            ->field('a.real_name,a.phone,a.company,b.car_num,b.status,b.type')->where('a.openid', session('openid'))->select();
         return $info;
     }
+    // 提交预约
     public function submit_order()
     {
         $data['order_id'] = rand(00000001, 99999999);
@@ -47,8 +53,10 @@ class Order extends Controller
         $data['phone']=input('post.phone');
         $sum=Db::name('order')->where('type','in','1,2')->count();
         $data['rank']=$sum+1;
-        if($data['rank']=1){
+        if($data['rank'] == 1){
             $data['type']=2;
+        }else{
+            $data['type']=1;
         }
         Db::name('order')->insert($data);
         return '预约成功!';

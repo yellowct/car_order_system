@@ -18,6 +18,7 @@ class Index extends Controller
     public function get_order()
     {
         $map = [];
+        //获取查询字段
         $good_name = input('post.good_name');
         $search_data=input('post.search_data');
         if ($good_name && $good_name !== "") {
@@ -26,6 +27,7 @@ class Index extends Controller
         if ($search_data && $search_data !== "") {
             $map['real_name|company|car_num|phone'] = ['like', "%" . $search_data . "%"];
         }
+        // 获取预约记录(限定4条)
         $order = Db::name('order')
             ->where($map)
             ->where('type', 'in', '1,2')

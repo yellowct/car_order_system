@@ -14,11 +14,17 @@ use think\Db;
 // 记录日志
 function writeLog($username, $operate, $content, $result)
 {
+    // 操作者
     $data['username'] = $username;
+    // 操作行为
     $data['operate'] = $operate;
+    // 内容
     $data['content'] = $content;
+    // 结果
     $data['result'] = $result;
+    // ip地址
     $data['ip'] = request()->ip();
+    // 创建时间
     $data['create_time'] = time();
     $log = Db::name('log')->insert($data);
 }

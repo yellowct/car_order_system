@@ -27,7 +27,7 @@
             <div class="search">
                 <div class="searchCon">
                     <!-- <span class="sx" @click="sxBtn">筛选</span> -->
-                    <input type="text" placeholder="请输入你想搜索的内容" class="weui-input" v-model="searchData">
+                    <input type="text" placeholder="请输入司机姓名/电话号码/所属单位/车牌号" class="weui-input" v-model="searchData">
                     <span class="icon-search" v-on:click="submit"></span>
                     <div class="refresh">
                         <span class="icon-refresh" v-on:click="refresh"></span>
@@ -85,11 +85,8 @@
 </body>
 <script>
     var vm = new Vue({
-
         el: '#main',
-
         data: {
-
             selected: '',
 
             goodNameData: '',
@@ -165,7 +162,6 @@
                             vthis.isCq = false;
 
 
-
                         } else if (data[i]["type"] == 1) {
 
                             data[i]["type"] = "待装";
@@ -173,8 +169,6 @@
                             vthis.isIng = false;
 
                             vthis.isCq = true;
-
-
 
                         }
 
@@ -263,13 +257,12 @@
                 });
 
             },
-
+            // 根据输入的字段查询车辆排队状态
             selectGoodName: function (ele) {
 
                 this.goodNameData = ele.target.value;
 
                 var vthis = this;
-
 
                 $.ajax({
 
@@ -293,9 +286,7 @@
 
                                 vthis.isIng = true;
 
-                                vthis.isCq = false;
-
-
+                                vthis.isCq = fals
 
                             } else if (data[i]["type"] == 1) {
 
@@ -305,12 +296,8 @@
 
                                 vthis.isCq = true;
 
-
-
                             }
-
-
-
+                            // 将获取的二维数组逐条遍历
                             vthis.order.push({
 
                                 rank: data[i]['rank'],
